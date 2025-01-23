@@ -1,0 +1,14 @@
+memberWhatFind = 1
+memberRowFromFindDonor = 1
+memberWhereFind = 1
+memberRowFromFindRecepient = 1
+memberwhereDayNightDonor = 2
+memberwhereDayNightRecepient = 2
+memberWhatToInsert = 4
+memberWhereToInsert = 4
+refreshChecked = 1
+dayNightParametres = 0
+lastLineDonor = 0
+lastLineRecepient = 0
+colorColumnRecepint = 9
+colorChecked = 0

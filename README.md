@@ -1,4 +1,4 @@
-VPR Convertor (XML & XLS)
+VPR-Convertor-New
 
 What can:
 1) Load XLS and XLSX files for comparison

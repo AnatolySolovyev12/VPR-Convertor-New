@@ -31,7 +31,7 @@ Table::Table(QWidget* parent)
     connect(buttConvertToXML, &QPushButton::clicked, this, &Table::funcConvertToXML);
 
     donor = new QPushButton("Добавить донора", this);
-    //donor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //donor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);ч
     connect(donor, &QPushButton::clicked, this, &Table::addDonor);
 
     recepient = new QPushButton("Добавить реципиента", this);
@@ -1217,7 +1217,16 @@ void Table::funcConvertToXML()
 
     checkXml();
 
-    if (!xmlEsf && !xmlZarya) return;
+    if (!xmlEsf && !xmlZarya)
+    {
+        workbookDonor->dynamicCall("Close()");
+        excelDonor->dynamicCall("Quit()");
+
+        delete workbookDonor;
+        delete excelDonor;
+
+        return;
+    }
 
     QDate curDate = QDate::currentDate();
     QTime curTime = QTime::currentTime();

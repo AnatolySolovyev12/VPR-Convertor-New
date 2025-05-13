@@ -14,8 +14,6 @@ set(SOURCES
 "${CMAKE_SOURCE_DIR}/source/Table.h"
 ) # Добавьте сюда ваши файлы
 
-#qt6_wrap_ui(UI_HEADERS "${CMAKE_SOURCE_DIR}/source/GuidGenv2.ui")
-#@qt6_add_resources(RESOURCES "${CMAKE_SOURCE_DIR}/source/GuidGenv2.qrc")
 qt6_wrap_cpp(MOC_SOURCES ${SOURCES})
 
 add_executable(VPR-Convertor-New-App ${SOURCES} ${MOC_SOURCES})

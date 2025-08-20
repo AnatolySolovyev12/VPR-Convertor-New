@@ -135,4 +135,5 @@ private:
 
     ProgressClass* myProgress = nullptr;
     QProgressBar* tempBarPtr = nullptr;
+    QStatusBar* tempStatusBarPtr = nullptr;
 };

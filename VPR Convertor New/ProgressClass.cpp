@@ -27,3 +27,8 @@ QProgressBar* ProgressClass::getBarPtr()
 {
 	return ui.progressBar;
 }
+
+QStatusBar* ProgressClass::getStatusBarPtr()
+{
+	return ui.statusBar;
+}

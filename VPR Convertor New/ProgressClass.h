@@ -14,6 +14,7 @@ public:
 	void setMaximumBar(int any);
 	void clearBar();
 	QProgressBar* getBarPtr();
+	QStatusBar* getStatusBarPtr();
 
 private:
 	Ui::ProgressClassClass ui;

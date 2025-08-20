@@ -108,6 +108,7 @@ Table::Table(QWidget* parent)
     setAcceptDrops(true); // это свойство определяет включение событий перетаскивания для виджета. true -  можем закидывать. false - не можем.
 
     tempBarPtr = myProgress->getBarPtr();
+    tempStatusBarPtr = myProgress->getStatusBarPtr();
 }
 
 
@@ -167,7 +168,9 @@ void Table::myVPR()
 
         countTimer = timer.elapsed();
 
-        qDebug() << "Creating an array finished in =" << (double)countTimer / 1000 << "sec";
+        qDebug() << "Creating an array finished in = " << (double)countTimer / 1000 << " sec";
+
+        tempStatusBarPtr->showMessage("Creating an array finished in = " + QString::number((double)countTimer / 1000) + " sec", 2000);
 
         workbookDonor->dynamicCall("Close()"); 
         excelDonor->dynamicCall("Quit()");
@@ -228,12 +231,16 @@ void Table::myVPR()
 
                 qDebug() << ct.toString() << " " << countDoingIterationForTime;
 
+                tempStatusBarPtr->showMessage(ct.toString() + " " + QString::number(countDoingIterationForTime), 200);
+
                 countDoingIterationForTime = 0;
             }
         }
         
         countTimer = timer.elapsed();
         out << "VPR finished in = " << (double)countTimer / 1000 << " sec" << Qt::endl;
+
+        tempStatusBarPtr->showMessage("VPR finished in = " + QString::number((double)countTimer / 1000) + " sec", 2000);
     }
 
     if (!dayNightParametres)
@@ -255,6 +262,8 @@ void Table::myVPR()
         countTimer = timer.elapsed();
 
         qDebug() << "Creating an array finished in =" << (double)countTimer / 1000 << "sec";
+
+        tempStatusBarPtr->showMessage("Creating an array finished in = " + QString::number((double)countTimer / 1000) + " sec", 3000);
 
         workbookDonor->dynamicCall("Close()");
         excelDonor->dynamicCall("Quit()");
@@ -311,6 +320,8 @@ void Table::myVPR()
 
                 qDebug() << ct.toString() << " " << countDoingIterationForTime;
 
+                tempStatusBarPtr->showMessage(ct.toString() + " " + QString::number(countDoingIterationForTime), 200);
+
                 countDoingIterationForTime = 0;
             }
         }
@@ -318,6 +329,8 @@ void Table::myVPR()
         countTimer = timer.elapsed();
 
         out << "VPR finished in = " << (double)countTimer / 1000 << " sec" << Qt::endl;
+
+        tempStatusBarPtr->showMessage("VPR finished in = " + QString::number((double)countTimer / 1000) + " sec", 3000);
     }
 
     if (!refreshChecked)
@@ -327,7 +340,7 @@ void Table::myVPR()
         excelRecepient->dynamicCall("Quit()");
         delete workbookRecepient;
         delete excelRecepient;
-        myProgress->hide();
+        QTimer::singleShot(3000, [this]() {myProgress->hide(); });
         return;
     }
 
@@ -368,7 +381,7 @@ void Table::myVPR()
     excelRecepient->dynamicCall("Quit()");
     delete workbookRecepient;
     delete excelRecepient;
-    myProgress->hide();
+    QTimer::singleShot(3000, [this]() {myProgress->hide(); });
     return;
 }
 
@@ -1694,6 +1707,7 @@ void Table::testVPR()
     myProgress->setMaximumBar(countRowsDonor - lastLineDonor);
     myProgress->clearBar();
     tempBarPtr->setValue(0);
+    tempStatusBarPtr->showMessage("Wait...", 2000);
 
     QTimer::singleShot(100, [this](){
         myVPR();

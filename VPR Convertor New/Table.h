@@ -13,12 +13,11 @@
 #include <QMainWindow>
 #include <algorithm>
 #include <QCheckBox>
-
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttribute>
+#include <QThread.h>
 
-
-class Table : public QWidget {
+class Table : public QMainWindow {
 
     Q_OBJECT
 
@@ -53,6 +52,9 @@ private slots:
 
     void dragEnterEvent(QDragEnterEvent* event);
     void dropEvent(QDropEvent* event);
+
+
+    void testThreed();
 
 private:
 
@@ -131,13 +133,6 @@ private:
     QCheckBox* dayNightCheck;
     QCheckBox* colorCheck;
 
-    
-    /* // Использовался в ранеем варианте VPR. Изменения не отразились на скорости работы алгоритма
-    struct vprStruct
-    {
-        QVariant whatFindStruct;
-        QVariant dayNightStruct;
-        QVariant valueStruct;
-    };
-    */
+
+    QThread* thread = nullptr;
 };

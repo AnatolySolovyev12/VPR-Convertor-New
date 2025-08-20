@@ -12,6 +12,6 @@ int main(int argc, char* argv[]) {
     window.setWindowIcon(QIcon(QCoreApplication::applicationDirPath() + "\\icon.png"));
     window.setWindowTitle("VPR Convertor by Solovev");
     window.show();
-
+    
     return app.exec();
 }

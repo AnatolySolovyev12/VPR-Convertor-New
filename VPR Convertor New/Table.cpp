@@ -5,20 +5,20 @@
 #include <QTime>
 #include <QMultiHash>
 #include <QFile>
-
 #include <QPair.h>
-
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
 
-
 QTextStream out(stdout);
 
 Table::Table(QWidget* parent)
-    : QWidget(parent) {
+    : QMainWindow(parent) {
 
-    QHBoxLayout* Hbox = new QHBoxLayout(this);
+    QWidget* centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+
+    QHBoxLayout* Hbox = new QHBoxLayout(centralWidget);
     Vbox = new QVBoxLayout();
     QVBoxLayout* VboxButtons = new QVBoxLayout();
 
@@ -58,10 +58,8 @@ Table::Table(QWidget* parent)
     pm->addAction("&На сколько строк от последней прекратить поиск в реципиенте?", this, &Table::lastLineInRecepient);
     pm->addAction("&В каком столбце ищем негативные значения?", this, &Table::colorColumnRecepientFunc);
 
-
     paramMenu->setMenu(pm);
 
-    
     savedConfig = new QPushButton("Сохранить параметры", this);
     saveMenu = new QMenu(savedConfig);
 
@@ -70,9 +68,8 @@ Table::Table(QWidget* parent)
 
     savedConfig->setMenu(saveMenu);
     
-
     statusBar = new QStatusBar();
-    statusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QMainWindow::setStatusBar(statusBar);
 
     cb = new QCheckBox("Обновить таблицу реципиента после ВПР", this);
     connect(cb, &QCheckBox::stateChanged, this, &Table::checkStateForRefresh);
@@ -85,8 +82,6 @@ Table::Table(QWidget* parent)
 
     refresh = new QPushButton("Обновить", this);
     connect(refresh, &QPushButton::clicked, this, &Table::refreshAllButtons);
-
-
 
     VboxButtons->setSpacing(10); // расстояние между виджетами внутри вертикального бокса
     VboxButtons->addStretch(1); // равноудаляет от краёв или типо того
@@ -102,7 +97,6 @@ Table::Table(QWidget* parent)
     VboxButtons->addWidget(paramMenu);
     VboxButtons->addWidget(refresh);
 
-    VboxButtons->addWidget(statusBar);
     VboxButtons->addStretch(1);
 
     Hbox->addLayout(Vbox, Qt::AlignRight);
@@ -155,7 +149,6 @@ void Table::myVPR()
 
     if (dayNightParametres)
     {
-
         QMultiHash<QPair<QString, QString>, QVariant> tabelDonorFindAndDay; // профита нет
 
         for (int counter = memberRowFromFindDonor; counter <= (countRowsDonor - lastLineDonor); counter++)
@@ -183,6 +176,8 @@ void Table::myVPR()
 
         for (int counter = memberRowFromFindRecepient; counter <= (countRowsRecepient - lastLineRecepient); counter++)
         {
+   
+
             compareRecepient = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberWhereFind);
             paste = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberWhereToInsert);
             dayRecepient = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberwhereDayNightRecepient);
@@ -1682,3 +1677,17 @@ void Table::dropEvent(QDropEvent* event) // если события перета
             qDebug() << "Wrong format. Try again.";
     }
 }
+
+
+/*
+void Table::testThreed()
+{
+    
+    thread = QThread::create([this](){
+        this->myVPR();
+        });
+    QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+    thread->start();
+    
+}
+*/

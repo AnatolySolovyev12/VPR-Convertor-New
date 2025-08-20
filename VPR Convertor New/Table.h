@@ -15,7 +15,6 @@
 #include <QCheckBox>
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttribute>
-#include <QThread.h>
 
 class Table : public QMainWindow {
 
@@ -52,9 +51,6 @@ private slots:
 
     void dragEnterEvent(QDragEnterEvent* event);
     void dropEvent(QDropEvent* event);
-
-
-    void testThreed();
 
 private:
 

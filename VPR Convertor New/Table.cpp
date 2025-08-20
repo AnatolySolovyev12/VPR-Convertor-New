@@ -13,7 +13,7 @@
 QTextStream out(stdout);
 
 Table::Table(QWidget* parent)
-    : QMainWindow(parent) {
+    : QMainWindow(parent), myProgress(new ProgressClass){
 
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -24,7 +24,7 @@ Table::Table(QWidget* parent)
 
     VPR = new QPushButton("ВПР", this);
    // VPR->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(VPR, &QPushButton::clicked, this, &Table::myVPR);
+    connect(VPR, &QPushButton::clicked, this, &Table::testVPR);
 
     buttConvertToXML = new QPushButton("Конвертировать донора в XML", this);
     // VPR->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -106,6 +106,8 @@ Table::Table(QWidget* parent)
     readDefaultFileConfig();
 
     setAcceptDrops(true); // это свойство определяет включение событий перетаскивания для виджета. true -  можем закидывать. false - не можем.
+
+    tempBarPtr = myProgress->getBarPtr();
 }
 
 
@@ -176,8 +178,8 @@ void Table::myVPR()
 
         for (int counter = memberRowFromFindRecepient; counter <= (countRowsRecepient - lastLineRecepient); counter++)
         {
+            tempBarPtr->setValue(counter);
    
-
             compareRecepient = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberWhereFind);
             paste = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberWhereToInsert);
             dayRecepient = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberwhereDayNightRecepient);
@@ -238,7 +240,7 @@ void Table::myVPR()
     {
         QMultiHash< QString, QString> tabelDonorFindAndDay; // QMultiMap
 
-        for (int counter = memberRowFromFindDonor; counter < (countRowsDonor - lastLineDonor); counter++)
+        for (int counter = memberRowFromFindDonor; counter <= (countRowsDonor - lastLineDonor); counter++)
         {
             compareDonor = sheetDonor->querySubObject("Cells(auto,auto)", counter, memberWhatFind);
             copy = sheetDonor->querySubObject("Cells(auto,auto)", counter, memberWhatToInsert);
@@ -261,8 +263,10 @@ void Table::myVPR()
 
         QMultiHashIterator<QString, QString> it(tabelDonorFindAndDay);
 
-        for (int counter = memberRowFromFindRecepient; counter < (countRowsRecepient - lastLineRecepient); counter++)
+        for (int counter = memberRowFromFindRecepient; counter <= (countRowsRecepient - lastLineRecepient); counter++)
         {
+            tempBarPtr->setValue(counter);
+
             compareRecepient = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberWhereFind);
             paste = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberWhereToInsert);
             negativeValue = sheetRecepient->querySubObject("Cells(&int,&int)", counter, colorColumnRecepint);
@@ -318,10 +322,12 @@ void Table::myVPR()
 
     if (!refreshChecked)
     {
+        workbookRecepient->dynamicCall("Save()");
         workbookRecepient->dynamicCall("Close()");
         excelRecepient->dynamicCall("Quit()");
         delete workbookRecepient;
         delete excelRecepient;
+        myProgress->hide();
         return;
     }
 
@@ -357,10 +363,12 @@ void Table::myVPR()
 
     out << "Refresh recepient table" << Qt::endl;
 
+    workbookRecepient->dynamicCall("Save()");
     workbookRecepient->dynamicCall("Close()");
     excelRecepient->dynamicCall("Quit()");
     delete workbookRecepient;
     delete excelRecepient;
+    myProgress->hide();
     return;
 }
 
@@ -1679,15 +1687,16 @@ void Table::dropEvent(QDropEvent* event) // если события перета
 }
 
 
-/*
-void Table::testThreed()
+
+void Table::testVPR()
 {
-    
-    thread = QThread::create([this](){
-        this->myVPR();
+    myProgress->show();
+    myProgress->setMaximumBar(countRowsDonor - lastLineDonor);
+    myProgress->clearBar();
+    tempBarPtr->setValue(0);
+
+    QTimer::singleShot(100, [this](){
+        myVPR();
         });
-    QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
-    thread->start();
-    
+
 }
-*/

@@ -15,6 +15,8 @@
 #include <QCheckBox>
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttribute>
+#include <ProgressClass.h>
+#include <QTimer.h>
 
 class Table : public QMainWindow {
 
@@ -51,6 +53,8 @@ private slots:
 
     void dragEnterEvent(QDragEnterEvent* event);
     void dropEvent(QDropEvent* event);
+
+    void testVPR();
 
 private:
 
@@ -129,6 +133,6 @@ private:
     QCheckBox* dayNightCheck;
     QCheckBox* colorCheck;
 
-
-    QThread* thread = nullptr;
+    ProgressClass* myProgress = nullptr;
+    QProgressBar* tempBarPtr = nullptr;
 };

@@ -24,7 +24,7 @@ Table::Table(QWidget* parent)
 
     VPR = new QPushButton("ВПР", this);
    // VPR->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(VPR, &QPushButton::clicked, this, &Table::testVPR);
+    connect(VPR, &QPushButton::clicked, this, &Table::generaVprFunc);
 
     buttConvertToXML = new QPushButton("Конвертировать донора в XML", this);
     // VPR->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -115,13 +115,6 @@ Table::Table(QWidget* parent)
 
 void Table::myVPR()
 {
-    if (!Table::readyDonor || !Table::readyRecepient)
-    {
-        statusBar->showMessage("Сперва добавьте донора затем реципиента.", 2000);
-
-        return;
-    }
-
     excelDonor = new QAxObject("Excel.Application", 0);// использование самого Excel. При использованиии ActiveX надо полагать что на всех целевыфх машинах будет установлен Excel. В общем указываем с каким приложением будем работать (к примеру могло быть "Outlook.Application")
     workbooksDonor = excelDonor->querySubObject("Workbooks"); // выбираем книгу
     workbookDonor = workbooksDonor->querySubObject("Open(const QString&)", addFileDonor); // выбираем файл с каким работать
@@ -170,14 +163,12 @@ void Table::myVPR()
 
         qDebug() << "Creating an array finished in = " << (double)countTimer / 1000 << " sec";
 
-        tempStatusBarPtr->showMessage("Creating an array finished in = " + QString::number((double)countTimer / 1000) + " sec", 2000);
+        tempStatusBarPtr->showMessage("Creating an array finished in = " + QString::number((double)countTimer / 1000) + " sec", 200);
 
         workbookDonor->dynamicCall("Close()"); 
         excelDonor->dynamicCall("Quit()");
         delete workbookDonor;
         delete excelDonor;
-
-        QMultiHashIterator<QPair<QString, QString>, QVariant> it(tabelDonorFindAndDay);
 
         for (int counter = memberRowFromFindRecepient; counter <= (countRowsRecepient - lastLineRecepient); counter++)
         {
@@ -194,10 +185,7 @@ void Table::myVPR()
             {
                 ++countDoingIterationForTime;
 
-                paste->dynamicCall("SetValue(double)", (tabelDonorFindAndDay.find(forFind).value()));
-
-                // tabelDonorFindAndDay.remove(it.key(), it.value()); // удаление записей из хэша (непомогло ускорить процесс)
-                 // tabelDonorFindAndDay.count(); - для подсчёта остатков после удаления из хэша записей
+                paste->dynamicCall("SetValue(double)", (tabelDonorFindAndDay.find(forFind).value()));            
 
                 delete compareRecepient;
                 delete paste;
@@ -216,18 +204,18 @@ void Table::myVPR()
                     delete interior;
                 }
             }
-            delete negativeValue;
 
+            delete negativeValue;
             delete sheetRecepient;
             delete sheetsRecepient;
             sheetsRecepient = workbookRecepient->querySubObject("Worksheets");
             sheetRecepient = sheetsRecepient->querySubObject("Item(int)", listRecepient);
 
-            if (valueForTimer - timer.elapsed() <= 100) // для отслеживания количества выполнений каждые 5 секунд. Видно что замедляется но почему хз?
+            if (valueForTimer - timer.elapsed() <= 100)
             {
                 valueForTimer += 5000;
 
-                QTime ct = QTime::currentTime(); // возвращаем текущее время
+                QTime ct = QTime::currentTime();
 
                 qDebug() << ct.toString() << " " << countDoingIterationForTime;
 
@@ -238,14 +226,20 @@ void Table::myVPR()
         }
         
         countTimer = timer.elapsed();
-        out << "VPR finished in = " << (double)countTimer / 1000 << " sec" << Qt::endl;
 
-        tempStatusBarPtr->showMessage("VPR finished in = " + QString::number((double)countTimer / 1000) + " sec", 2000);
+        QTimer::singleShot(100, [this, countTimer]() {
+
+            tempStatusBarPtr->showMessage("VPR finished in = " + QString::number((double)countTimer / 1000) + " sec", 3000);
+
+            }
+        );
+
+        out << "VPR finished in = " << (double)countTimer / 1000 << " sec" << Qt::endl;
     }
 
     if (!dayNightParametres)
     {
-        QMultiHash< QString, QString> tabelDonorFindAndDay; // QMultiMap
+        QMultiHash< QString, QString> tabelDonorFindAndDay;
 
         for (int counter = memberRowFromFindDonor; counter <= (countRowsDonor - lastLineDonor); counter++)
         {
@@ -263,14 +257,12 @@ void Table::myVPR()
 
         qDebug() << "Creating an array finished in =" << (double)countTimer / 1000 << "sec";
 
-        tempStatusBarPtr->showMessage("Creating an array finished in = " + QString::number((double)countTimer / 1000) + " sec", 3000);
+        tempStatusBarPtr->showMessage("Creating an array finished in = " + QString::number((double)countTimer / 1000) + " sec", 200);
 
         workbookDonor->dynamicCall("Close()");
         excelDonor->dynamicCall("Quit()");
         delete workbookDonor;
         delete excelDonor;
-
-        QMultiHashIterator<QString, QString> it(tabelDonorFindAndDay);
 
         for (int counter = memberRowFromFindRecepient; counter <= (countRowsRecepient - lastLineRecepient); counter++)
         {
@@ -279,7 +271,6 @@ void Table::myVPR()
             compareRecepient = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberWhereFind);
             paste = sheetRecepient->querySubObject("Cells(&int,&int)", counter, memberWhereToInsert);
             negativeValue = sheetRecepient->querySubObject("Cells(&int,&int)", counter, colorColumnRecepint);
-
 
             // Обновлённый алгоритм поиска совпадающих значений. Профит Кратное увеличение скорости.
             if (tabelDonorFindAndDay.find(compareRecepient->property("Value").toString()) != tabelDonorFindAndDay.constEnd())
@@ -306,7 +297,6 @@ void Table::myVPR()
             }
 
             delete negativeValue;
-
             delete sheetRecepient;
             delete sheetsRecepient;
             sheetsRecepient = workbookRecepient->querySubObject("Worksheets");
@@ -328,9 +318,14 @@ void Table::myVPR()
 
         countTimer = timer.elapsed();
 
-        out << "VPR finished in = " << (double)countTimer / 1000 << " sec" << Qt::endl;
+        QTimer::singleShot(100, [this, countTimer]() {
 
-        tempStatusBarPtr->showMessage("VPR finished in = " + QString::number((double)countTimer / 1000) + " sec", 3000);
+            tempStatusBarPtr->showMessage("VPR finished in = " + QString::number((double)countTimer / 1000) + " sec", 3000);
+
+            }
+        );
+
+        out << "VPR finished in = " << (double)countTimer / 1000 << " sec" << Qt::endl;
     }
 
     if (!refreshChecked)
@@ -1701,8 +1696,14 @@ void Table::dropEvent(QDropEvent* event) // если события перета
 
 
 
-void Table::testVPR()
+void Table::generaVprFunc()
 {
+    if (!Table::readyDonor || !Table::readyRecepient)
+    {
+        statusBar->showMessage("Сперва добавьте донора затем реципиента.", 2000);
+        return;
+    }
+
     myProgress->show();
     myProgress->setMaximumBar(countRowsDonor - lastLineDonor);
     myProgress->clearBar();
@@ -1712,5 +1713,4 @@ void Table::testVPR()
     QTimer::singleShot(100, [this](){
         myVPR();
         });
-
 }

@@ -54,7 +54,7 @@ private slots:
     void dragEnterEvent(QDragEnterEvent* event);
     void dropEvent(QDropEvent* event);
 
-    void testVPR();
+    void generaVprFunc();
 
 private:
 

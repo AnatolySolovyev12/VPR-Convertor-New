@@ -6,7 +6,6 @@ ProgressClass::ProgressClass(QWidget *parent)
 	ui.setupUi(this);
 	ui.progressBar->show();
 	ui.progressBar->setValue(0);
-
 }
 
 ProgressClass::~ProgressClass()
@@ -16,7 +15,6 @@ void ProgressClass::setMaximumBar(int any)
 {
 	ui.progressBar->setRange(0, any);
 }
-
 
 void ProgressClass::clearBar()
 {

@@ -952,6 +952,7 @@ void Table::readDefaultFileConfig()
 	if (!file.open(QIODevice::ReadOnly))
 	{
 		out << "Dont fide config file. Used default cofiguration." << Qt::endl;
+        statusBar->showMessage("Dont fide config file. Used default cofiguration.", 2000);
 		return;
 	}
 
@@ -1265,6 +1266,7 @@ void Table::funcConvertToXML()
     timer.start();
 
     qDebug() << "Wait...";
+    statusBar->showMessage("Wait...", 2000);
 
     QFile file(savedFile);
     file.open(QIODevice::WriteOnly);
@@ -1440,6 +1442,7 @@ void Table::funcConvertToXML()
                 QTime ct = QTime::currentTime(); // возвращаем текущее время
 
                 qDebug() << ct.toString() << "   " << countDoingIterationForTime;
+                statusBar->showMessage(ct.toString() + " " + QString::number(countDoingIterationForTime), 200);
 
                 countDoingIterationForTime = 0;
             }
@@ -1532,6 +1535,7 @@ void Table::funcConvertToXML()
                 QTime ct = QTime::currentTime(); // возвращаем текущее время
 
                 qDebug() << ct.toString() << "   " << countDoingIterationForTime;
+                statusBar->showMessage(ct.toString() + " " + QString::number(countDoingIterationForTime), 200);
 
                 countDoingIterationForTime = 0;
             }
@@ -1554,6 +1558,7 @@ void Table::funcConvertToXML()
 
     countTimer = timer.elapsed();
     out << "XLS to XML was convert for = " << (double)countTimer / 1000 << " sec" << Qt::endl;
+    statusBar->showMessage("XLS to XML was convert for = " + QString::number((double)countTimer / 1000) + " sec", 2000);
 }
 
 void Table::checkXml()
@@ -1588,12 +1593,14 @@ void Table::checkXml()
 
         if (count == 14)
         {
+            statusBar->showMessage("XLS convert in Zarya format XML", 2000);
             qDebug() << "XLS convert in Zarya format XML";
             xmlZarya = true;
             return;
         }
         else
         {
+            statusBar->showMessage("Incorrect format Zarya XLS file. Try again with correct file", 2000);
             qDebug() << "Incorrect format Zarya XLS file. Try again with correct file";
             return;
         }
@@ -1630,17 +1637,20 @@ void Table::checkXml()
 
         if (count == 19)
         {
+            statusBar->showMessage("XLS convert in Esf format XML", 2000);
             qDebug() << "XLS convert in Esf format XML";
             xmlEsf = true;
             return;
         }
         else
         {
+            statusBar->showMessage("Incorrect format Esf XLS file. Try again with correct file", 2000);
             qDebug() << "Incorrect format Esf XLS file. Try again with correct file";
             return;
         }
     }
 
+    statusBar->showMessage("Incorrect format XLS file. Try again with correct file", 2000);
     qDebug() << "Incorrect format XLS file. Try again with correct file";
     return;
 }
